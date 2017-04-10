@@ -2,13 +2,14 @@ require_relative 'frame'
 require_relative 'last_frame'
 
 class BowlingGame
-  FRAME_COUNT = 10
+  FRAME_COUNT            = 10
+  ADDITIONAL_SCORE_COUNT = 2
 
   def initialize(frames)
     @frames = frames
   end
 
-  def running_score
+  def score
     begin
       validate!
       calculate_score
@@ -20,11 +21,13 @@ class BowlingGame
   private
 
   def validate!
-    raise ArgumentError, "Invalid Input: Game Scores can't be blank" if blank? 
-    raise ArgumentError, "Invalid Input: Invalid Frame count" unless has_valid_frame_count?
+    raise ArgumentError, 
+      "Invalid Input: Game Scores can't be blank." if blank? 
+    raise ArgumentError, 
+      "Invalid Input: Invalid Frame count (#{@frames.count})." unless valid_frame_count?
   end
 
-  def has_valid_frame_count?
+  def valid_frame_count?
     @frames.count == FRAME_COUNT
   end
 
@@ -32,40 +35,42 @@ class BowlingGame
     @frames.nil? || @frames.empty?
   end
 
-  def frame_score(frame)
-    Frame.new(frame).score
+  def calculate_score
+    running_score = 0
+    @frames.each_with_index.map{ |frame, index| 
+      running_score += calculate_total_frame_score(frame, index) 
+    }
   end
 
+  def calculate_total_frame_score(frame, index)
+    return last_frame_score(frame) if index == last_index
+    frame_score(frame, index)
+  end
+
+  def last_frame_score(frame)
+    LastFrame.new(frame).score
+  end
+
+  def frame_score(frame, index)
+    frame_object = Frame.new(frame)
+    frame_object.score + additional_score(frame_object, index).to_i
+  end
+  
   def last_index
     @frames.count - 1
   end
 
-  def calculate_score
-    running_score = 0
-    score_array   = Array.new
-
-    @frames.each_with_index do |frame, index|
-      running_score += calculate_total_frame_score(frame, index).to_i
-      score_array << running_score
-    end
-
-    return score_array
+  def additional_score(frame_object, index)
+    return 0 unless frame_object.strike?
+    next_scores(index).inject :+
   end
 
-  def calculate_total_frame_score(frame, index)
-    if index == last_index
-      LastFrame.new(frame).score
-    else
-      frame = Frame.new(frame)
-      frame.score + additional_score(frame, index).to_i
-    end
+  def next_frames(index)
+    length = ADDITIONAL_SCORE_COUNT + 1
+    @frames[index, length]
   end
 
-  def additional_score(frame, index)
-    return 0 unless frame.strike?
-
-    nexts = @frames[index, 3]
-    next_2 = nexts.flatten[1,2]
-    next_2.inject{ |sum,x| sum + x.to_i }
+  def next_scores(index)
+    next_frames(index).flatten[1, ADDITIONAL_SCORE_COUNT]
   end
 end

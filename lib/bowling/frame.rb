@@ -1,7 +1,8 @@
 class Frame
-  MAX_SCORE = 10
-  MIN_SCORE = 0
-  MAX_BALLS = 2
+  MAX_SCORE  = 10
+  MIN_SCORE  = 0
+  MAX_THROWS = 2
+  MIN_THROWS = 1
 
   def initialize(frame)
     @frame = frame
@@ -9,7 +10,7 @@ class Frame
 
   def score
     validate!
-    total
+    @frame.inject :+
   end
 
   def strike?
@@ -20,28 +21,25 @@ class Frame
   private
 
   def validate!
-    raise ArgumentError, "Invalid Input: Frames can't be blank" if blank? 
-    raise ArgumentError, 'Invalid Input: Frames should be numerical' unless numerical?
-    raise ArgumentError, 'Invalid Input: Invalid number of balls' unless has_valid_ball_count?
+    message = "Invalid Input: #{@frame.inspect}."
+    raise ArgumentError, 
+      "#{message} Frames can't be blank." if blank? 
+    raise ArgumentError, 
+      "#{message} Frames should be a number between 0 and 10." unless numerical?
+    raise ArgumentError, 
+      "#{message} Invalid number of throws." unless valid_throw_count?
   end
 
   def numerical?
     @frame.all? {|i| i.is_a?(Integer) && i >= MIN_SCORE && i <= MAX_SCORE }
   end
 
-  def has_valid_ball_count?
-    if self.strike?
-      @frame.count == 1
-    else
-      @frame.count == MAX_BALLS
-    end
+  def valid_throw_count?
+    return @frame.count == MAX_THROWS unless strike?
+    @frame.count == MIN_THROWS
   end
 
   def blank?
     @frame.nil? || @frame.empty?
-  end
-
-  def total
-    @frame.inject{ |sum,x| sum + x.to_i }
   end
 end

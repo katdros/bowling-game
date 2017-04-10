@@ -1,15 +1,13 @@
 require_relative 'frame'
 
 class LastFrame < Frame
-  MAX_BALLS = 3
+  MAX_THROWS = 3
+  MIN_THROWS = 2
 
   private
 
-  def has_valid_ball_count?
-    if strike?
-      @frame.count == MAX_BALLS
-    else
-      @frame.count == 2
-    end
+  def valid_throw_count?
+    return @frame.count == MAX_THROWS if strike?
+    @frame.count == MIN_THROWS
   end
 end
