@@ -27,7 +27,7 @@ describe Frame do
   end
 
   describe '#score' do
-    context 'when input is invalid' do
+    describe 'input is invalid' do
       context 'when there is no input' do
         it 'raises an error' do
           frame = Frame.new(nil)
@@ -60,6 +60,14 @@ describe Frame do
         end
       end
 
+      context 'when given frame values adds up to greater than 10' do
+        it 'raises an error' do
+          frame = Frame.new([8,6])
+          expect{ frame.score }.to raise_error(ArgumentError, 
+            'Invalid Input: [8, 6]. Frame scores should have a maximum total of 10.')
+        end
+      end
+
       context 'when given frame values are negative' do
         it 'raises an error' do
           frame = Frame.new([-1,-2])
@@ -85,7 +93,7 @@ describe Frame do
       end
     end
 
-    context 'when input is valid' do
+    describe 'input is valid' do
       it 'calculates the score for the given strike frame' do
         frame = Frame.new([10])
         expect(frame.score).to eq(10)

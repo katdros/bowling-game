@@ -17,6 +17,16 @@ describe LastFrame do
             'Invalid Input: [10, 2]. Invalid number of throws.')
         end
       end
+
+      context 'when second throw is not a strike' do
+        context 'when given frame values adds up to greater than 20' do
+          it 'raises an error' do
+            frame = LastFrame.new([10,8,6])
+            expect{ frame.score }.to raise_error(ArgumentError, 
+              'Invalid Input: [10, 8, 6]. Frame scores should have a maximum total of 20.')
+          end
+        end
+      end
     end
 
     context 'when given frame is not a strike' do
@@ -32,6 +42,14 @@ describe LastFrame do
         it 'calculates the score' do
           frame = LastFrame.new([1,9])
           expect(frame.score).to eq(10)
+        end
+      end
+
+      context 'when given frame values adds up to greater than 10' do
+        it 'raises an error' do
+          frame = LastFrame.new([8,6])
+          expect{ frame.score }.to raise_error(ArgumentError, 
+            'Invalid Input: [8, 6]. Frame scores should have a maximum total of 10.')
         end
       end
     end

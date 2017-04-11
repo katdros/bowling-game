@@ -11,7 +11,7 @@ describe BowlingGame do
   end
 
   describe '#score' do
-    context 'when input is invalid' do
+    describe 'input is invalid' do
       context 'when there is no input' do
         it 'shows an error ' do
           score = BowlingGame.new(nil).score
@@ -41,7 +41,7 @@ describe BowlingGame do
       end
     end
 
-    context 'when input is valid' do
+    describe 'input is valid' do
       context 'when frames given have no strike' do      
         it "calculates the score with no additional points" do
           frames          = [[6,2],[9,1],[1,8],[1,0],[4,1],[5,2],[0,3],[1,0],[7,0],[1,0]]

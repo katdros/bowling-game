@@ -65,12 +65,12 @@ class BowlingGame
     next_scores(index).inject :+
   end
 
+  def next_scores(index)
+    next_frames(index).flatten[1, ADDITIONAL_SCORE_COUNT]
+  end
+
   def next_frames(index)
     length = ADDITIONAL_SCORE_COUNT + 1
     @frames[index, length]
-  end
-
-  def next_scores(index)
-    next_frames(index).flatten[1, ADDITIONAL_SCORE_COUNT]
   end
 end

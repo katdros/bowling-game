@@ -10,7 +10,7 @@ class Frame
 
   def score
     validate!
-    @frame.inject :+
+    calculate_score
   end
 
   def strike?
@@ -20,14 +20,22 @@ class Frame
 
   private
 
+  def error_message
+    "Invalid Input: #{@frame.inspect}."
+  end
+
   def validate!
-    message = "Invalid Input: #{@frame.inspect}."
     raise ArgumentError, 
-      "#{message} Frames can't be blank." if blank? 
+      "#{error_message} Frames can't be blank." if blank? 
     raise ArgumentError, 
-      "#{message} Frames should be a number between 0 and 10." unless numerical?
+      "#{error_message} Frames should be a number between 0 and 10." unless numerical?
     raise ArgumentError, 
-      "#{message} Invalid number of throws." unless valid_throw_count?
+      "#{error_message} Invalid number of throws." unless valid_throw_count?
+  end
+
+  def validate_score!(score)
+    raise ArgumentError, 
+      "#{error_message} Frame scores should have a maximum total of #{MAX_SCORE}." if score > MAX_SCORE
   end
 
   def numerical?
@@ -41,5 +49,11 @@ class Frame
 
   def blank?
     @frame.nil? || @frame.empty?
+  end
+
+  def calculate_score
+    score = @frame.inject :+
+    validate_score!(score)
+    score
   end
 end
